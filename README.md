@@ -14,3 +14,8 @@ Pickle
 
 📜 License
 This project is open-source and available under the MIT License.
+
+
+# For the Random Forest Model 
+Download it thorough the drive link and paste it in the modes folder
+https://drive.google.com/drive/folders/1znuBG9TMKFzu3aOexIDI5RrDLAb4kqgZ?usp=sharing
