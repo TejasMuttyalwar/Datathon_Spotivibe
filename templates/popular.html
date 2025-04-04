@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find My Vibe | Spotify Mood Recommender</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --spotify-green: #1DB954;
+      --spotify-black: #191414;
+      --spotify-dark-gray: #282828;
+      --spotify-light-gray: #B3B3B3;
+      --spotify-white: #FFFFFF;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: var(--spotify-white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    .nav-bar {
+      width: 100%;
+      padding: 1rem 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+    .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+    }
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #4ecdc4;
+    }
+    .container {
+      max-width: 800px;
+      text-align: center;
+      margin-top: 8rem;
+    }
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 2rem;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fadeIn 1s ease-in;
+      text-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+    }
+    .cta-section {
+      margin-top: 3rem;
+    }
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      font-size: 1.2rem;
+      background: linear-gradient(45deg, #4ecdc4, #45b7af);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+    }
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(78, 205, 196, 0.5);
+      background: linear-gradient(45deg, #ff6b6b, #ff5252);
+    }
+    .cta-button i {
+      margin-right: 10px;
+      font-size: 1.5rem;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      .cta-button {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+      }
+      .nav-links {
+        gap: 1rem;
+      }
+      .nav-link {
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav-bar">
+    <div class="logo">
+      <h2>🎶 FindMyVibe</h2>
+    </div>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/find_my_vibe" class="nav-link">Recommender</a>
+      <a href="/popular" class="nav-link">Popular Music</a>
+      <a href="#about" class="nav-link">About</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Find Your Musical Vibe 🎵</h1>
+    
+    <div class="cta-section">
+      <a href="/find_my_vibe" class="cta-button">
+        <i class="fas fa-magic"></i>
+        Start Your Journey
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <p>🎧 Made with ❤️ by Music Lovers • Follow us on 
+      <a href="#" style="color: #4ecdc4; text-decoration: none;">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </p>
+  </footer>
+
+  <script>
+    // Smooth scrolling for navigation links (if needed)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>

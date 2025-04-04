@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find My Vibe - Music Recommender</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-dark-gray: #282828;
+            --spotify-light-gray: #B3B3B3;
+            --spotify-white: #FFFFFF;
+            --spotify-hover-dark: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            background: var(--spotify-black);
+            color: var(--spotify-white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, var(--spotify-black) 100%);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(29, 185, 84, 0.2) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--spotify-white), var(--spotify-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+        
+        .logo p {
+            color: var(--spotify-light-gray);
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        
+        .selector-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .selector-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .selector-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--spotify-light-gray);
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .mood-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .mood-option {
+            background: var(--spotify-dark-gray);
+            color: var(--spotify-white);
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+        
+        .mood-option:hover {
+            background: var(--spotify-hover-dark);
+            transform: translateY(-2px);
+        }
+        
+        .mood-option.active {
+            background: var(--spotify-green);
+            color: var(--spotify-black);
+            font-weight: 600;
+        }
+        
+        select {
+            background: var(--spotify-dark-gray);
+            color: var(--spotify-white);
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .tempo-selector {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .tempo-option {
+            background: var(--spotify-dark-gray);
+            color: var(--spotify-white);
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tempo-option:hover {
+            background: var(--spotify-hover-dark);
+            transform: translateY(-2px);
+        }
+        
+        .tempo-option.active {
+            background: var(--spotify-green);
+            color: var(--spotify-black);
+            font-weight: 600;
+        }
+        
+        .tempo-option i {
+            font-size: 0.8rem;
+        }
+        
+        .predict-button {
+            background: var(--spotify-green);
+            color: var(--spotify-black);
+            padding: 12px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .predict-button:hover {
+            background: #1ed760;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .results-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .results-container.visible {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--spotify-white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--spotify-green);
+        }
+        
+        .recommended-songs {
+            margin-bottom: 50px;
+        }
+        
+        .song-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .song-item {
+            background: var(--spotify-dark-gray);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .song-item:hover {
+            background: var(--spotify-hover-dark);
+            transform: translateX(5px);
+        }
+        
+        .song-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--spotify-light-gray);
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .song-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+        
+        .song-info {
+            flex-grow: 1;
+        }
+        
+        .song-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .song-artist {
+            font-size: 0.9rem;
+            color: var(--spotify-light-gray);
+        }
+        
+        .song-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .song-action {
+            color: var(--spotify-light-gray);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .song-action:hover {
+            color: var(--spotify-white);
+        }
+        
+        .song-action.play:hover {
+            color: var(--spotify-green);
+        }
+        
+        .song-duration {
+            color: var(--spotify-light-gray);
+            font-size: 0.9rem;
+            min-width: 45px;
+            text-align: right;
+        }
+        
+        .loading {
+            display: none;
+            justify-content: center;
+            margin: 40px 0;
+        }
+        
+        .loading.visible {
+            display: flex;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--spotify-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 2.2rem;
+            }
+            
+            .selector-container {
+                padding: 15px;
+            }
+            
+            .mood-option, .tempo-option {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .song-item {
+                padding: 10px;
+            }
+            
+            .song-image {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .song-number {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>Find My Vibe</h1>
+                <p>Discover music that matches your mood</p>
+            </div>
+            
+            <form class="selector-container" method="POST" action="/find_my_vibe">
+                <div class="selector-row">
+                    <div>
+                        <div class="selector-label">Select Your Mood</div>
+                        <div class="mood-selector">
+                            {% for mood in mood_to_features.keys() %}
+                                <div class="mood-option {% if mood == selected_mood %}active{% endif %}" 
+                                     onclick="selectOption(this, 'mood', '{{ mood }}')">
+                                    {{ mood|capitalize }}
+                                </div>
+                            {% endfor %}
+                            <input type="hidden" name="mood" id="mood-input" value="{{ mood }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="selector-row">
+                    <div>
+                        <div class="selector-label">Select Genre</div>
+                        <select name="genre" id="genre-select">
+                            {% for genre in genres %}
+                                <option value="{{ genre }}" {% if genre == selected_genre %}selected{% endif %}>
+                                    {{ genre|capitalize }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="selector-row">
+                    <div>
+                        <div class="selector-label">Tempo</div>
+                        <div class="tempo-selector">
+                            <div class="tempo-option {% if tempo == 'fast' %}active{% endif %}" 
+                                 onclick="selectOption(this, 'tempo', 'fast')">
+                                <i class="fas fa-bolt"></i> Fast
+                            </div>
+                            <div class="tempo-option {% if tempo == 'slow' %}active{% endif %}" 
+                                 onclick="selectOption(this, 'tempo', 'slow')">
+                                <i class="fas fa-moon"></i> Slow
+                            </div>
+                            <input type="hidden" name="tempo" id="tempo-input" value="{{ tempo }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="predict-button">
+                    <i class="fas fa-headphones"></i> Find My Vibe
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        {% if show_results %}
+            <div class="results-container visible">
+                <div class="recommended-songs">
+                    <h2 class="section-title">
+                        <i class="fas fa-music"></i> Recommended Songs for {{ mood|capitalize }} {{ genre|capitalize }} Vibes
+                    </h2>
+                    
+                    <div class="song-list">
+                        {% for song in songs %}
+                            <div class="song-item">
+                                <div class="song-number">{{ loop.index }}</div>
+                                {% if song.album_art %}
+                                    <img src="{{ song.album_art }}" alt="{{ song.track_name }}" class="song-image">
+                                {% else %}
+                                    <div class="song-image" style="background: #333; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-music"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="song-info">
+                                    <div class="song-title">{{ song.track_name }}</div>
+                                    <div class="song-artist">{{ song.artists }}</div>
+                                </div>
+                                <div class="song-actions">
+                                    {% if song.spotify_url %}
+                                        <a href="{{ song.spotify_url }}" target="_blank" class="song-action play">
+                                            <i class="fas fa-play"></i>
+                                        </a>
+                                    {% endif %}
+                                    <div class="song-action">
+                                        <i class="far fa-heart"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        function selectOption(element, type, value) {
+            // Remove active class from all options of this type
+            document.querySelectorAll(`.${type}-option`).forEach(opt => {
+                opt.classList.remove('active');
+            });
+            
+            // Add active class to selected option
+            element.classList.add('active');
+            
+            // Update the hidden input value
+            document.getElementById(`${type}-input`).value = value;
+            
+            // For mood, we might want to update genres available
+            if (type === 'mood') {
+                // You could add logic here to filter genres based on mood
+            }
+        }
+        
+        // Add like functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('fa-heart')) {
+                e.target.classList.toggle('fas');
+                e.target.classList.toggle('far');
+            }
+        });
+    </script>
+</body>
+</html>

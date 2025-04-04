@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Vibe Results | Spotify Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --spotify-green: #1DB954;
+      --spotify-black: #191414;
+      --spotify-dark-gray: #282828;
+      --spotify-light-gray: #B3B3B3;
+      --spotify-white: #FFFFFF;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--spotify-black);
+      color: var(--spotify-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+    }
+    .song-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+    }
+    .song-card {
+      background: var(--spotify-dark-gray);
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 300px;
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.3s ease-in-out;
+    }
+    .song-card:hover {
+      transform: scale(1.05);
+    }
+    .song-card img {
+      width: 100%;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .song-card h3 {
+      margin: 10px 0 5px;
+      color: var(--spotify-white);
+    }
+    .song-card p {
+      font-size: 0.9rem;
+      color: var(--spotify-light-gray);
+    }
+    .spotify-player {
+      margin-top: 15px;
+      border-radius: 10px;
+    }
+    .model-predictions {
+      margin-top: 15px;
+      font-size: 0.9em;
+      color: var(--spotify-light-gray);
+      text-align: left;
+    }
+    .model-predictions ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    .model-predictions li {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎧 Your "{{ mood }}" Vibe in {{ genre.title() }} ({{ tempo }})</h1>
+  
+  <div class="song-container">
+    {% for song in songs %}
+    <div class="song-card">
+      <!-- Album Cover (Clickable to Spotify) -->
+      {% if song.spotify_url %}
+        <a href="{{ song.spotify_url }}" target="_blank">
+          <img src="{{ song.album_art }}" alt="Album cover">
+        </a>
+      {% else %}
+        <img src="{{ song.album_art }}" alt="Album cover">
+      {% endif %}
+      
+      <h3>{{ song.track_name }}</h3>
+      <p><strong>Artist:</strong> {{ song.artists }}</p>
+      
+      <!-- Embed Full Spotify Player -->
+      {% if song.spotify_uri %}
+      <iframe class="spotify-player" 
+              src="https://open.spotify.com/embed/track/{{ song.spotify_uri }}?utm_source=generator" 
+              width="100%" 
+              height="80" 
+              frameborder="0" 
+              allowtransparency="true" 
+              allow="encrypted-media">
+      </iframe>
+      {% else %}
+      <p><em>Song not available on Spotify</em></p>
+      {% endif %}
+      
+      <!-- Model Predictions (includes popularity prediction) -->
+      <div class="model-predictions">
+        <strong>Model Predictions:</strong>
+        <ul>
+          {% for model, prediction in song.predictions.items() %}
+          <li>{{ model }}: {{ prediction }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>
